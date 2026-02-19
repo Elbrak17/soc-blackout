@@ -9,31 +9,50 @@ Generates realistic incident response data across 4 Elasticsearch indices:
 """
 
 import os
+import sys
 import json
 import random
 import hashlib
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from elasticsearch import Elasticsearch, helpers
 from dotenv import load_dotenv
 from faker import Faker
 
-load_dotenv()
+# Load .env from project root (parent of scripts/)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(PROJECT_ROOT / ".env")
 fake = Faker()
 
 # ---------------------------------------------------------------------------
 # Connection
 # ---------------------------------------------------------------------------
 
-ES_URL = os.getenv("ELASTICSEARCH_URL", "http://localhost:9200")
+ES_URL = os.getenv("ELASTICSEARCH_URL", "")
 ES_API_KEY = os.getenv("ELASTICSEARCH_API_KEY", "")
 ES_CLOUD_ID = os.getenv("ELASTICSEARCH_CLOUD_ID", "")
 
 
 def get_es_client() -> Elasticsearch:
     """Create Elasticsearch client from environment variables."""
-    if ES_CLOUD_ID:
+    if ES_CLOUD_ID and ES_API_KEY:
         return Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=ES_API_KEY)
-    return Elasticsearch(ES_URL, api_key=ES_API_KEY) if ES_API_KEY else Elasticsearch(ES_URL)
+    if ES_URL and ES_API_KEY:
+        return Elasticsearch(ES_URL, api_key=ES_API_KEY)
+    if ES_URL:
+        return Elasticsearch(ES_URL)
+
+    print("\n❌ ERROR: No Elasticsearch connection configured!")
+    print("   Edit the .env file at the project root with your credentials:")
+    print(f"   → {PROJECT_ROOT / '.env'}")
+    print("")
+    print("   Required (pick one):")
+    print("     ELASTICSEARCH_CLOUD_ID=your-cloud-id")
+    print("     ELASTICSEARCH_API_KEY=your-api-key")
+    print("   OR:")
+    print("     ELASTICSEARCH_URL=https://your-es-url:9200")
+    print("     ELASTICSEARCH_API_KEY=your-api-key")
+    sys.exit(1)
 
 
 # ---------------------------------------------------------------------------
