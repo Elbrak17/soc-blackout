@@ -22,13 +22,13 @@ fi
 if [ ! -f "$PROJECT_ROOT/.env" ]; then
     echo ""
     echo "📝 No .env file found. Let's set up your Elasticsearch connection."
-    echo "   (You can find these in Elastic Cloud → Manage → Cloud ID / API Keys)"
+    echo "   (Find your Elasticsearch endpoint in Elastic Cloud → your project → Endpoints)"
     echo ""
-    read -p "  Elasticsearch Cloud ID: " CLOUD_ID
+    read -p "  Elasticsearch URL (e.g. https://my-project.es.us-central1.gcp.elastic.cloud): " ES_URL
     read -p "  Elasticsearch API Key: " API_KEY
 
     cat > "$PROJECT_ROOT/.env" << EOF
-ELASTICSEARCH_CLOUD_ID=${CLOUD_ID}
+ELASTICSEARCH_URL=${ES_URL}
 ELASTICSEARCH_API_KEY=${API_KEY}
 EOF
 

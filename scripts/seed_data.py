@@ -46,11 +46,8 @@ def get_es_client() -> Elasticsearch:
     print("   Edit the .env file at the project root with your credentials:")
     print(f"   → {PROJECT_ROOT / '.env'}")
     print("")
-    print("   Required (pick one):")
-    print("     ELASTICSEARCH_CLOUD_ID=your-cloud-id")
-    print("     ELASTICSEARCH_API_KEY=your-api-key")
-    print("   OR:")
-    print("     ELASTICSEARCH_URL=https://your-es-url:9200")
+    print("   Required:")
+    print("     ELASTICSEARCH_URL=https://your-project.es.us-central1.gcp.elastic.cloud")
     print("     ELASTICSEARCH_API_KEY=your-api-key")
     sys.exit(1)
 

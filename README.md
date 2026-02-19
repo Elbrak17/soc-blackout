@@ -60,7 +60,7 @@ For a detailed architecture with data flow diagrams, see [docs/architecture.md](
 git clone https://github.com/YOUR_USERNAME/soc-blackout.git
 cd soc-blackout
 cp .env.example .env
-# Edit .env with your Elasticsearch Cloud ID and API key
+# Edit .env with your Elasticsearch URL and API key
 ```
 
 ### 2. Run Setup
