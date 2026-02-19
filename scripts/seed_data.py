@@ -30,13 +30,10 @@ fake = Faker()
 
 ES_URL = os.getenv("ELASTICSEARCH_URL", "")
 ES_API_KEY = os.getenv("ELASTICSEARCH_API_KEY", "")
-ES_CLOUD_ID = os.getenv("ELASTICSEARCH_CLOUD_ID", "")
 
 
 def get_es_client() -> Elasticsearch:
     """Create Elasticsearch client from environment variables."""
-    if ES_CLOUD_ID and ES_API_KEY:
-        return Elasticsearch(cloud_id=ES_CLOUD_ID, api_key=ES_API_KEY)
     if ES_URL and ES_API_KEY:
         return Elasticsearch(ES_URL, api_key=ES_API_KEY)
     if ES_URL:
