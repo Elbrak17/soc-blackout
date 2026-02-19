@@ -1,0 +1,69 @@
+# SOC Blackout — Remediation Workflow
+#
+# Purpose: Execute approved remediation actions and log them to the audit trail
+# Tool Type: Elastic Workflow (called as a Workflow tool by the agent)
+#
+# This workflow has two steps:
+#   1. Log the action to the soc-actions audit index
+#   2. Generate a post-mortem summary via the SOC Blackout agent
+#
+# To create in Agent Builder:
+#   1. Go to Kibana → Management → Workflows
+#   2. Create a new workflow with the YAML below
+#   3. Then in Agent Builder → Tools → Create Tool → Workflow
+#   4. Tool ID: remediation_workflow
+#   5. Name: Remediation Workflow
+#   6. Description: "Executes an approved remediation action and logs it to the audit trail.
+#      ONLY call this tool after the operator has explicitly approved the proposed action.
+#      Requires: action_type, description, confidence score, and incident_ref."
+#   7. Link to the workflow created in step 2
+
+# --- Elastic Workflow Definition (YAML) ---
+
+version: "1"
+name: soc_blackout_remediate
+description: >
+  Execute approved remediation actions for SOC Blackout.
+  Logs the action to the soc-actions audit index and generates a post-mortem summary.
+enabled: true
+
+triggers:
+  - type: manual
+
+steps:
+  # Step 1: Log the executed action to the audit trail
+  - name: log_action_to_audit
+    type: elasticsearch.index
+    with:
+      index: "soc-actions"
+      document:
+        "@timestamp": "{{ now }}"
+        action_type: "{{ inputs.action_type }}"
+        description: "{{ inputs.description }}"
+        confidence: "{{ inputs.confidence }}"
+        status: "executed"
+        incident_ref: "{{ inputs.incident_ref }}"
+
+  # Step 2: Ask the agent to generate a post-mortem summary
+  - name: generate_postmortem
+    type: ai.agent
+    with:
+      agent_id: "soc-blackout"
+      message: |
+        Remediation action has been executed:
+        - Action: {{ inputs.action_type }}
+        - Description: {{ inputs.description }}
+        - Confidence: {{ inputs.confidence }}%
+        - Related incident: {{ inputs.incident_ref }}
+
+        Generate a brief post-mortem summary including:
+        1. Root cause identified
+        2. Action taken
+        3. Estimated time saved vs manual resolution (baseline: 45 min average MTTR)
+        4. Recommendations to prevent recurrence
+
+  # Step 3: Log the post-mortem result
+  - name: log_postmortem
+    type: console
+    with:
+      message: "{{ steps.generate_postmortem.output }}"

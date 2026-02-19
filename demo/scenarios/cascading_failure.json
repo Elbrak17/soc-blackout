@@ -1,0 +1,12 @@
+{
+    "scenario": "cascading_failure",
+    "description": "Authentication service failure cascades to all dependent services via circuit breaker storms",
+    "expected_agent_behavior": {
+        "detect": "anomaly_detector finds high CPU and memory across multiple hosts",
+        "diagnose": "log_analyzer identifies 'Connection refused', 'Circuit breaker OPEN', and 'Cascading timeout' errors across 4+ services",
+        "correlate": "incident_search matches INC-003 (Cascading failure from auth-service certificate expiry)",
+        "confidence": 85,
+        "recommendation": "Check auth-service TLS certificate, renew if expired, gradually reopen circuit breakers"
+    },
+    "trigger_instructions": "Run seed_data.py with scenario 'cascading_failure'. Then ask the agent: 'Multiple services are reporting connectivity failures. This looks like a cascading issue. Investigate immediately.'"
+}

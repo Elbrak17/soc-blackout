@@ -1,0 +1,22 @@
+{
+    "tool_id": "incident_search",
+    "tool_type": "index_search",
+    "display_name": "Incident Search",
+    "description": "Searches the historical incidents knowledge base to find similar past incidents based on symptoms, root causes, affected services, and error patterns. Uses semantic search to match current symptoms with past incident runbooks and resolutions. Call this tool after anomaly_detector and log_analyzer to correlate current issues with historical data.",
+    "index_pattern": "soc-incidents",
+    "notes": [
+        "This tool uses Index Search (not ES|QL) to leverage Elasticsearch's hybrid/vector search capabilities.",
+        "The agent dynamically constructs search queries based on the current incident symptoms.",
+        "The 'runbook' field should ideally have ELSER/E5 embeddings for semantic similarity.",
+        "If semantic search is not available, BM25 full-text search on 'runbook' + 'root_cause' + 'title' is effective.",
+        "In Agent Builder, create this as an Index Search tool pointing to the 'soc-incidents' index."
+    ],
+    "setup_instructions": {
+        "step_1": "Go to Tools → Create Tool → Index Search",
+        "step_2": "Set Tool ID to 'incident_search'",
+        "step_3": "Set Name to 'Incident Search'",
+        "step_4": "Set the description from this file",
+        "step_5": "Set Index Pattern to 'soc-incidents'",
+        "step_6": "Save the tool"
+    }
+}

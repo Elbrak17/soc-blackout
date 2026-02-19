@@ -1,0 +1,12 @@
+{
+    "scenario": "oom_crash",
+    "description": "Payment service pods are getting OOM-killed due to connection pool memory leak",
+    "expected_agent_behavior": {
+        "detect": "anomaly_detector finds max_mem > 98% on prod-app-01, prod-app-02",
+        "diagnose": "log_analyzer identifies 'OutOfMemoryError' and 'Container killed by OOM killer' errors",
+        "correlate": "incident_search matches INC-001 (Payment service OOM crash, connection pool issue)",
+        "confidence": 92,
+        "recommendation": "Restart affected pods, patch connection pool library, increase heap to 4GB"
+    },
+    "trigger_instructions": "Run seed_data.py with scenario 'oom_crash'. Then ask the agent: 'We're getting alerts about memory issues. Can you investigate what's happening?'"
+}

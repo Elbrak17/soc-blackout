@@ -1,0 +1,21 @@
+{
+    "agent_id": "soc-blackout",
+    "display_name": "SOC Blackout",
+    "display_description": "AI-powered Incident Commander — Detects anomalies, correlates with past incidents, and coordinates remediation with human-in-the-loop safety.",
+    "labels": [
+        "incident-response",
+        "sre",
+        "observability"
+    ],
+    "avatar": {
+        "color": "#E53E3E",
+        "symbol": "🚨"
+    },
+    "tools": [
+        "anomaly_detector",
+        "log_analyzer",
+        "incident_search",
+        "remediation_workflow"
+    ],
+    "notes": "Instructions are defined in agent/instructions.md and should be pasted into the Custom Instructions field in Agent Builder."
+}

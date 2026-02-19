@@ -1,0 +1,30 @@
+# Log Analyzer — ES|QL Tool
+#
+# Purpose: Extract and aggregate error patterns from application logs
+# Tool Type: ES|QL
+# Index: soc-logs
+#
+# To create in Agent Builder:
+#   1. Go to Tools → Create Tool → ES|QL
+#   2. Tool ID: log_analyzer
+#   3. Name: Log Analyzer
+#   4. Description: "Retrieves and aggregates recent error, critical, and fatal log entries
+#      to identify error patterns, affected services, and incident timeline.
+#      Call this tool after anomaly_detector to understand what errors are occurring."
+#   5. Paste the query below
+#   6. Define parameters: time_window (string, default "15 minutes")
+
+# --- ES|QL Query ---
+
+FROM soc-logs
+| WHERE @timestamp > NOW() - 15 MINUTES
+  AND level IN ("ERROR", "CRITICAL", "FATAL")
+| STATS
+    error_count = COUNT(*),
+    services = VALUES(service),
+    hosts = VALUES(host),
+    first_seen = MIN(@timestamp),
+    last_seen = MAX(@timestamp)
+  BY message
+| SORT error_count DESC
+| LIMIT 20

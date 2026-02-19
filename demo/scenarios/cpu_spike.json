@@ -1,0 +1,12 @@
+{
+    "scenario": "cpu_spike",
+    "description": "Recursive middleware loop causes API Gateway CPU spike to 100% across all pods",
+    "expected_agent_behavior": {
+        "detect": "anomaly_detector finds max_cpu > 95% on prod-web-01, prod-web-02",
+        "diagnose": "log_analyzer identifies 'CPU throttling detected' and 'Thread pool exhausted' errors",
+        "correlate": "incident_search matches INC-002 (API Gateway CPU spike from recursive middleware)",
+        "confidence": 88,
+        "recommendation": "Rollback API gateway config to previous version, add middleware stack depth limit"
+    },
+    "trigger_instructions": "Run seed_data.py with scenario 'cpu_spike'. Then ask the agent: 'Something is wrong with our API gateway. Check the metrics and logs for the last 15 minutes.'"
+}
