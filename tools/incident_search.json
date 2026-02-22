@@ -17,6 +17,7 @@
         "step_3": "Set Name to 'Incident Search'",
         "step_4": "Set the description from this file",
         "step_5": "Set Index Pattern to 'soc-incidents'",
-        "step_6": "Save the tool"
+        "step_6": "Define Query parameter description: 'The symptoms, error messages, or affected services to search for in the historical incidents knowledge base.'",
+        "step_7": "Save the tool"
     }
 }

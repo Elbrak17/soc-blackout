@@ -16,7 +16,12 @@
 #   6. Description: "Executes an approved remediation action and logs it to the audit trail.
 #      ONLY call this tool after the operator has explicitly approved the proposed action.
 #      Requires: action_type, description, confidence score, and incident_ref."
-#   7. Link to the workflow created in step 2
+#   7. Define parameters (from workflow inputs):
+#      - action_type (String): "The type of action to execute (e.g. restart_pod, rollback_config)"
+#      - description (String): "The exact remediation action to execute"
+#      - confidence (Integer): "The confidence score of the diagnosis (0-100)"
+#      - incident_ref (String): "The ID of the correlated historical incident"
+#   8. Link to the workflow created in step 2
 
 # --- Elastic Workflow Definition (YAML) ---
 

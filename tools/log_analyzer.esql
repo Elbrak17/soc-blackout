@@ -12,7 +12,7 @@
 #      to identify error patterns, affected services, and incident timeline.
 #      Call this tool after anomaly_detector to understand what errors are occurring."
 #   5. Paste the query below
-#   6. Define parameters: time_window (string, default "15 minutes")
+#   6. Define parameters: NONE (This query uses NOW() - 15 MINUTES directly, no params needed)
 
 # --- ES|QL Query ---
 
