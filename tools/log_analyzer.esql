@@ -4,15 +4,31 @@
 # Tool Type: ES|QL
 # Index: soc-logs
 #
-# To create in Agent Builder:
-#   1. Go to Tools → Create Tool → ES|QL
-#   2. Tool ID: log_analyzer
-#   3. Name: Log Analyzer
-#   4. Description: "Retrieves and aggregates recent error, critical, and fatal log entries
-#      to identify error patterns, affected services, and incident timeline.
-#      Call this tool after anomaly_detector to understand what errors are occurring."
-#   5. Paste the query below
-#   6. Define parameters: NONE (This query uses NOW() - 15 MINUTES directly, no params needed)
+# ============================================================
+# KIBANA SETUP INSTRUCTIONS
+# ============================================================
+#
+# 1. Go to Agent Builder → Tools → Create Tool → ES|QL
+#
+# 2. Tool ID: log_analyzer
+#
+# 3. Name: Log Analyzer
+#
+# 4. Description (copy this exactly):
+#      Retrieves and aggregates recent ERROR, CRITICAL, and FATAL
+#      log entries to identify error patterns, affected services,
+#      and incident timeline. Call this tool AFTER anomaly_detector
+#      to understand what errors are occurring on flagged hosts.
+#
+# 5. Paste the ES|QL query below into the query field
+#
+# 6. Parameters:
+#
+#    This tool has NO user-configurable parameters.
+#    The query is static and scans the last 15 minutes of logs.
+#    The agent calls it as-is without arguments.
+#
+# ============================================================
 
 # --- ES|QL Query ---
 

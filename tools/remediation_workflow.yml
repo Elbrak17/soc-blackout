@@ -7,21 +7,48 @@
 #   1. Log the action to the soc-actions audit index
 #   2. Generate a post-mortem summary via the SOC Blackout agent
 #
-# To create in Agent Builder:
+# ============================================================
+# KIBANA SETUP INSTRUCTIONS
+# ============================================================
+#
+# PART A — Create the Workflow:
 #   1. Go to Kibana → Management → Workflows
-#   2. Create a new workflow with the YAML below
-#   3. Then in Agent Builder → Tools → Create Tool → Workflow
-#   4. Tool ID: remediation_workflow
-#   5. Name: Remediation Workflow
-#   6. Description: "Executes an approved remediation action and logs it to the audit trail.
-#      ONLY call this tool after the operator has explicitly approved the proposed action.
-#      Requires: action_type, description, confidence score, and incident_ref."
-#   7. Define parameters (from workflow inputs):
-#      - action_type (String): "The type of action to execute (e.g. restart_pod, rollback_config)"
-#      - description (String): "The exact remediation action to execute"
-#      - confidence (Integer): "The confidence score of the diagnosis (0-100)"
-#      - incident_ref (String): "The ID of the correlated historical incident"
-#   8. Link to the workflow created in step 2
+#   2. Create a new workflow, paste the YAML definition below
+#   3. Save it
+#
+# PART B — Create the Workflow Tool:
+#   1. Go to Agent Builder → Tools → Create Tool → Workflow
+#   2. Tool ID: remediation_workflow
+#   3. Name: Remediation Workflow
+#   4. Description (copy this exactly):
+#        Executes an approved remediation action and logs it to
+#        the soc-actions audit trail. Generates a post-mortem
+#        summary automatically. ONLY call this tool AFTER the
+#        operator has explicitly approved the proposed action.
+#        NEVER call this tool autonomously.
+#   5. Link to the workflow created in Part A
+#
+# PART C — Parameters (these are the workflow inputs):
+#
+#    ┌───────────────┬─────────┬──────────┬──────────────────────────────────────────────────────────┐
+#    │ Name          │ Type    │ Required │ Description                                              │
+#    ├───────────────┼─────────┼──────────┼──────────────────────────────────────────────────────────┤
+#    │ action_type   │ string  │ yes      │ Category of the remediation action being executed.       │
+#    │               │         │          │ Examples: "pod_restart", "config_rollback",               │
+#    │               │         │          │ "cert_renewal", "scale_up", "hotfix_deploy".              │
+#    ├───────────────┼─────────┼──────────┼──────────────────────────────────────────────────────────┤
+#    │ description   │ string  │ yes      │ Human-readable description of the exact action taken.    │
+#    │               │         │          │ Example: "Restarted payment-service pods on prod-app-01   │
+#    │               │         │          │ and prod-app-02 to resolve OOM issue".                    │
+#    ├───────────────┼─────────┼──────────┼──────────────────────────────────────────────────────────┤
+#    │ confidence    │ integer │ yes      │ The agent's confidence score for this action (0-100).    │
+#    │               │         │          │ Must be >= 70 to proceed with execution.                  │
+#    ├───────────────┼─────────┼──────────┼──────────────────────────────────────────────────────────┤
+#    │ incident_ref  │ string  │ yes      │ Reference to the correlated historical incident.         │
+#    │               │         │          │ Example: "INC-001". Use "NONE" if no match was found.     │
+#    └───────────────┴─────────┴──────────┴──────────────────────────────────────────────────────────┘
+#
+# ============================================================
 
 # --- Elastic Workflow Definition (YAML) ---
 

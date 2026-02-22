@@ -4,17 +4,37 @@
 # Tool Type: ES|QL
 # Index: soc-metrics
 #
-# To create in Agent Builder:
-#   1. Go to Tools → Create Tool → ES|QL
-#   2. Tool ID: anomaly_detector
-#   3. Name: Anomaly Detector
-#   4. Description: "Scans recent infrastructure metrics to detect CPU spikes, memory exhaustion,
-#      and unusual disk I/O or network traffic across production hosts.
-#      Call this tool first when investigating a potential incident."
-#   5. Paste the query below
-#   6. Define parameters:
-#      - cpu_threshold (Integer): "Threshold for CPU usage percentage to consider as an anomaly (0-100). Default is 90."
-#      - mem_threshold (Integer): "Threshold for Memory usage percentage to consider as an anomaly (0-100). Default is 95."
+# ============================================================
+# KIBANA SETUP INSTRUCTIONS
+# ============================================================
+#
+# 1. Go to Agent Builder → Tools → Create Tool → ES|QL
+#
+# 2. Tool ID: anomaly_detector
+#
+# 3. Name: Anomaly Detector
+#
+# 4. Description (copy this exactly):
+#      Scans recent infrastructure metrics to detect CPU spikes,
+#      memory exhaustion, and unusual disk I/O or network traffic
+#      across production hosts. Call this tool FIRST when
+#      investigating a potential incident.
+#
+# 5. Paste the ES|QL query below into the query field
+#
+# 6. Parameters (Kibana will detect ?params in the query):
+#
+#    ┌─────────────────┬─────────┬─────────┬────────────────────────────────────────────────────┐
+#    │ Name            │ Type    │ Default │ Description                                        │
+#    ├─────────────────┼─────────┼─────────┼────────────────────────────────────────────────────┤
+#    │ cpu_threshold   │ integer │ 90      │ CPU usage percentage above which a host is flagged │
+#    │                 │         │         │ as anomalous. Range: 0-100.                        │
+#    ├─────────────────┼─────────┼─────────┼────────────────────────────────────────────────────┤
+#    │ mem_threshold   │ integer │ 95      │ Memory usage percentage above which a host is      │
+#    │                 │         │         │ flagged as anomalous. Range: 0-100.                │
+#    └─────────────────┴─────────┴─────────┴────────────────────────────────────────────────────┘
+#
+# ============================================================
 
 # --- ES|QL Query ---
 

@@ -2,22 +2,27 @@
     "tool_id": "incident_search",
     "tool_type": "index_search",
     "display_name": "Incident Search",
-    "description": "Searches the historical incidents knowledge base to find similar past incidents based on symptoms, root causes, affected services, and error patterns. Uses semantic search to match current symptoms with past incident runbooks and resolutions. Call this tool after anomaly_detector and log_analyzer to correlate current issues with historical data.",
-    "index_pattern": "soc-incidents",
-    "notes": [
-        "This tool uses Index Search (not ES|QL) to leverage Elasticsearch's hybrid/vector search capabilities.",
-        "The agent dynamically constructs search queries based on the current incident symptoms.",
-        "The 'runbook' field should ideally have ELSER/E5 embeddings for semantic similarity.",
-        "If semantic search is not available, BM25 full-text search on 'runbook' + 'root_cause' + 'title' is effective.",
-        "In Agent Builder, create this as an Index Search tool pointing to the 'soc-incidents' index."
-    ],
+    "description": "Searches the historical incidents knowledge base to find similar past incidents based on symptoms, root causes, affected services, and error patterns. Uses semantic search to match current symptoms with past incident runbooks and resolutions. Call this tool AFTER anomaly_detector and log_analyzer to correlate current issues with historical data.",
     "setup_instructions": {
-        "step_1": "Go to Tools → Create Tool → Index Search",
+        "step_1": "Go to Agent Builder → Tools → Create Tool → Index Search",
         "step_2": "Set Tool ID to 'incident_search'",
-        "step_3": "Set Name to 'Incident Search'",
-        "step_4": "Set the description from this file",
+        "step_3": "Set Display Name to 'Incident Search'",
+        "step_4": "Copy the 'description' field above as the tool description",
         "step_5": "Set Index Pattern to 'soc-incidents'",
-        "step_6": "Define Query parameter description: 'The symptoms, error messages, or affected services to search for in the historical incidents knowledge base.'",
+        "step_6": "Configure the fields to return: incident_id, title, root_cause, resolution, services_affected, severity, duration_min, tags, runbook",
         "step_7": "Save the tool"
-    }
+    },
+    "parameters": {
+        "query": {
+            "type": "string",
+            "required": true,
+            "description": "Natural language description of the current incident symptoms to search for in the knowledge base. Include error messages, affected services, and observed metrics. Example: 'OOM crash on payment-service with memory at 98%'."
+        }
+    },
+    "notes": [
+        "Kibana auto-generates a 'query' parameter for Index Search tools.",
+        "The description above tells the agent HOW to formulate its query.",
+        "BM25 full-text search on 'runbook' + 'root_cause' + 'title' is used.",
+        "If ELSER/E5 semantic search is available on the index, it will be used automatically."
+    ]
 }
