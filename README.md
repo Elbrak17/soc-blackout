@@ -75,17 +75,23 @@ This will:
 - Create 4 Elasticsearch indices (`soc-logs`, `soc-metrics`, `soc-incidents`, `soc-actions`)
 - Seed synthetic data with demo scenarios
 
-### 3. Create Agent in Agent Builder
+### 3. Create Custom Tools in Agent Builder
+
+Before creating the agent, we must create its tools.
+1. Open **Kibana → Agent Builder → Tools**
+2. Click **Create Tool**, then create these 4 tools using the configurations in the `tools/` directory:
+   - `anomaly_detector` (ES|QL tool) — copy prompt & query from [`tools/anomaly_detector.esql`](tools/anomaly_detector.esql)
+   - `log_analyzer` (ES|QL tool) — copy prompt & query from [`tools/log_analyzer.esql`](tools/log_analyzer.esql)
+   - `incident_search` (Index Search tool) — copy configuration from [`tools/incident_search.json`](tools/incident_search.json)
+   - `remediation_workflow` (Workflow tool) — you'll need to create the workflow first using [`tools/remediation_workflow.yml`](tools/remediation_workflow.yml), then select it here.
+
+### 4. Create the Agent
 
 1. Open **Kibana → Agent Builder → Agents → New Agent**
 2. **Agent ID**: `soc-blackout`
 3. **Display Name**: SOC Blackout
 4. **Custom Instructions**: Copy contents of [`agent/instructions.md`](agent/instructions.md)
-5. **Assign Tools**: Create each tool from the `tools/` directory:
-   - `anomaly_detector` (ES|QL) — from [`tools/anomaly_detector.esql`](tools/anomaly_detector.esql)
-   - `log_analyzer` (ES|QL) — from [`tools/log_analyzer.esql`](tools/log_analyzer.esql)
-   - `incident_search` (Index Search) — from [`tools/incident_search.json`](tools/incident_search.json)
-   - `remediation_workflow` (Workflow) — from [`tools/remediation_workflow.yml`](tools/remediation_workflow.yml)
+5. **Assign Tools**: Select the 4 tools you just created (`anomaly_detector`, `log_analyzer`, `incident_search`, `remediation_workflow`)
 6. **Save and Chat**
 
 ### 4. Try It
