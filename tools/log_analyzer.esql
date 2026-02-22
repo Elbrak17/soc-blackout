@@ -20,7 +20,8 @@
 #      and incident timeline. Call this tool AFTER anomaly_detector
 #      to understand what errors are occurring on flagged hosts.
 #
-# 5. Paste the ES|QL query below into the query field
+# 5. Copy ONLY the query below (everything between the dashes)
+#    into the ES|QL query field. Do NOT include these comments.
 #
 # 6. Parameters:
 #
@@ -30,17 +31,9 @@
 #
 # ============================================================
 
-# --- ES|QL Query ---
+# --- COPY FROM HERE ---
+# (paste only the line below into the ES|QL query field)
 
-FROM soc-logs
-| WHERE @timestamp > NOW() - 15 MINUTES
-  AND level IN ("ERROR", "CRITICAL", "FATAL")
-| STATS
-    error_count = COUNT(*),
-    services = VALUES(service),
-    hosts = VALUES(host),
-    first_seen = MIN(@timestamp),
-    last_seen = MAX(@timestamp)
-  BY message
-| SORT error_count DESC
-| LIMIT 20
+FROM soc-logs | WHERE @timestamp > NOW() - 15 MINUTES AND level IN ("ERROR", "CRITICAL", "FATAL") | STATS error_count = COUNT(*), first_seen = MIN(@timestamp), last_seen = MAX(@timestamp) BY message, service, host | SORT error_count DESC | LIMIT 20
+
+# --- END ---

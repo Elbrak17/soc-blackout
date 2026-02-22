@@ -16,41 +16,30 @@
 #
 # 4. Description (copy this exactly):
 #      Scans recent infrastructure metrics to detect CPU spikes,
-#      memory exhaustion, and unusual disk I/O or network traffic
-#      across production hosts. Call this tool FIRST when
-#      investigating a potential incident.
+#      memory exhaustion, and unusual disk I/O across production
+#      hosts. Call this tool FIRST when investigating a potential
+#      incident.
 #
-# 5. Paste the ES|QL query below into the query field
+# 5. Copy ONLY the query below (everything between the dashes)
+#    into the ES|QL query field. Do NOT include these comments.
 #
-# 6. Parameters (Kibana will detect ?params in the query):
+# 6. Parameters (Kibana detects ?params in the query):
 #
-#    ┌─────────────────┬─────────┬─────────┬────────────────────────────────────────────────────┐
-#    │ Name            │ Type    │ Default │ Description                                        │
-#    ├─────────────────┼─────────┼─────────┼────────────────────────────────────────────────────┤
-#    │ cpu_threshold   │ integer │ 90      │ CPU usage percentage above which a host is flagged │
-#    │                 │         │         │ as anomalous. Range: 0-100.                        │
-#    ├─────────────────┼─────────┼─────────┼────────────────────────────────────────────────────┤
-#    │ mem_threshold   │ integer │ 95      │ Memory usage percentage above which a host is      │
-#    │                 │         │         │ flagged as anomalous. Range: 0-100.                │
-#    └─────────────────┴─────────┴─────────┴────────────────────────────────────────────────────┘
+#    ┌─────────────────┬─────────┬──────────┬─────────┬────────────────────────────────────────────────┐
+#    │ Name            │ Type    │ Required │ Default │ Description                                    │
+#    ├─────────────────┼─────────┼──────────┼─────────┼────────────────────────────────────────────────┤
+#    │ cpu_threshold   │ integer │ optional │ 90      │ CPU usage percentage above which a host is     │
+#    │                 │         │          │         │ flagged as anomalous. Range: 0-100.            │
+#    ├─────────────────┼─────────┼──────────┼─────────┼────────────────────────────────────────────────┤
+#    │ mem_threshold   │ integer │ optional │ 95      │ Memory usage percentage above which a host is  │
+#    │                 │         │          │         │ flagged as anomalous. Range: 0-100.            │
+#    └─────────────────┴─────────┴──────────┴─────────┴────────────────────────────────────────────────┘
 #
 # ============================================================
 
-# --- ES|QL Query ---
+# --- COPY FROM HERE ---
+# (paste only the line below into the ES|QL query field)
 
-FROM soc-metrics
-| WHERE @timestamp > NOW() - 15 MINUTES
-| STATS
-    avg_cpu = AVG(cpu_pct),
-    max_cpu = MAX(cpu_pct),
-    avg_mem = AVG(mem_pct),
-    max_mem = MAX(mem_pct),
-    avg_disk = AVG(disk_io),
-    max_disk = MAX(disk_io),
-    avg_net_in = AVG(net_in),
-    avg_net_out = AVG(net_out),
-    sample_count = COUNT(*)
-  BY host
-| WHERE max_cpu > ?cpu_threshold OR max_mem > ?mem_threshold OR max_disk > 100
-| SORT max_cpu DESC
-| LIMIT 10
+FROM soc-metrics | WHERE @timestamp > NOW() - 15 MINUTES | STATS avg_cpu = AVG(cpu_pct), max_cpu = MAX(cpu_pct), avg_mem = AVG(mem_pct), max_mem = MAX(mem_pct), avg_disk = AVG(disk_io), max_disk = MAX(disk_io), sample_count = COUNT(*) BY host | WHERE max_cpu > ?cpu_threshold OR max_mem > ?mem_threshold OR max_disk > 100 | SORT max_cpu DESC | LIMIT 10
+
+# --- END ---
