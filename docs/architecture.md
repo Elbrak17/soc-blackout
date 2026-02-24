@@ -16,7 +16,6 @@ flowchart TD
             T1["anomaly_detector<br/>(ES|QL)"]
             T2["log_analyzer<br/>(ES|QL)"]
             T3["incident_search<br/>(Index Search)"]
-            T4["remediation_workflow<br/>(Workflow)"]
         end
     end
 
@@ -24,7 +23,6 @@ flowchart TD
         I1[("soc-metrics<br/>CPU, Memory, Disk, Network")]
         I2[("soc-logs<br/>Application Logs")]
         I3[("soc-incidents<br/>Historical Knowledge Base")]
-        I4[("soc-actions<br/>Audit Trail")]
     end
 
     subgraph Safety["🛡️ Safety Layer"]
@@ -39,16 +37,13 @@ flowchart TD
     AGENT --> T1
     AGENT --> T2
     AGENT --> T3
-    AGENT --> T4
 
     T1 -->|Metrics Query| I1
     T2 -->|Log Query| I2
     T3 -->|Semantic Search| I3
-    T4 -->|Write Audit| I4
 
     AGENT --> CS
     CS --> HIL
-    HIL -->|Approved| T4
     HIL -->|ABORT| KS
 ```
 
@@ -61,27 +56,19 @@ sequenceDiagram
     participant AD as anomaly_detector
     participant LA as log_analyzer
     participant IS as incident_search
-    participant RW as remediation_workflow
-    participant ES as Elasticsearch
 
     O->>A: "Something is wrong with prod"
     Note over A: Phase 1: DETECT
     A->>AD: Scan metrics (last 15 min)
-    AD->>ES: ES|QL query on soc-metrics
-    ES-->>AD: CPU 98% on prod-web-01
-    AD-->>A: Anomaly detected
+    AD->>A: CPU 98% on prod-web-01
 
     Note over A: Phase 2: DIAGNOSE
     A->>LA: Analyze error logs
-    LA->>ES: ES|QL query on soc-logs
-    ES-->>LA: 47 errors, "OOM" pattern
-    LA-->>A: Error patterns found
+    LA->>A: 47 errors, "OOM" pattern
 
     Note over A: Phase 3: CORRELATE
     A->>IS: Search past incidents
-    IS->>ES: Hybrid search on soc-incidents
-    ES-->>IS: INC-001 matches (87%)
-    IS-->>A: Similar incident found
+    IS->>A: INC-001 matches (87%)
 
     Note over A: Phase 4: ASSESS
     A->>A: Confidence Score: 92%
@@ -89,13 +76,10 @@ sequenceDiagram
     Note over A: Phase 5: PROPOSE
     A-->>O: Diagnosis + Recommendation<br/>Confidence: 92% ✅
 
-    O->>A: "Go ahead, execute"
+    O->>A: "Go ahead"
 
-    Note over A: Phase 6: EXECUTE
-    A->>RW: Execute remediation
-    RW->>ES: Log action to soc-actions
-    RW-->>A: Post-mortem generated
-    A-->>O: ✅ Action executed<br/>Time saved: ~40 min
+    Note over A: Phase 6: REPORT
+    A-->>O: ✅ Post-mortem generated<br/>Root cause + Actions + Prevention<br/>Time saved: ~40 min
 ```
 
 ## Index Schema
@@ -105,4 +89,3 @@ sequenceDiagram
 | `soc-metrics` | Infrastructure metrics | `@timestamp`, `host`, `cpu_pct`, `mem_pct`, `disk_io` | ES\|QL |
 | `soc-logs` | Application logs | `@timestamp`, `service`, `level`, `message`, `host` | ES\|QL |
 | `soc-incidents` | Historical KB | `incident_id`, `title`, `root_cause`, `runbook` | Index Search (semantic) |
-| `soc-actions` | Audit trail | `@timestamp`, `action_type`, `confidence`, `status` | Written by Workflow |

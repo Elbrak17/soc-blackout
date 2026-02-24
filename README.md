@@ -17,12 +17,10 @@ flowchart TD
     A --> T1["anomaly_detector<br/>ES|QL Tool"]
     A --> T2["log_analyzer<br/>ES|QL Tool"]
     A --> T3["incident_search<br/>Index Search Tool"]
-    A --> T4["remediation_workflow<br/>Workflow Tool"]
     
     T1 --> M[("soc-metrics")]
     T2 --> L[("soc-logs")]
     T3 --> I[("soc-incidents")]
-    T4 --> AC[("soc-actions")]
     
     A --> S["🛡️ Safety: Confidence Score + Human Approval + Kill Switch"]
 ```
@@ -35,13 +33,13 @@ For a detailed architecture with data flow diagrams, see [docs/architecture.md](
 
 | Feature | Description |
 |---|---|
-| **6-Phase Workflow** | Detect → Diagnose → Correlate → Assess → Propose → Execute |
-| **4 Custom Tools** | 2 ES\|QL (metrics + logs), 1 Index Search (incident KB), 1 Workflow (remediation) |
+| **6-Phase Workflow** | Detect → Diagnose → Correlate → Assess → Propose → Report |
+| **3 Custom Tools** | 2 ES\|QL (metrics + logs), 1 Index Search (historical incident KB) |
 | **Historical Correlation** | RAG search over 8 past incidents to find pattern matches |
 | **Confidence Scoring** | 0-100 score with threshold-based behavior (< 70% = analysis-only mode) |
 | **Human-in-the-Loop** | Agent never auto-executes — requires explicit operator approval |
 | **Kill Switch** | Operator can say "ABORT" at any time to halt all actions |
-| **Audit Trail** | Every action logged to `soc-actions` index with confidence + status |
+| **Post-Mortem Generation** | Agent generates structured post-mortem with root cause, actions, and prevention |
 | **MCP Server** | Agent accessible via Claude Desktop, Cursor, VS Code, or custom CLI |
 
 ---
@@ -72,18 +70,17 @@ chmod +x scripts/setup.sh
 
 This will:
 - Install Python dependencies
-- Create 4 Elasticsearch indices (`soc-logs`, `soc-metrics`, `soc-incidents`, `soc-actions`)
+- Create Elasticsearch indices (`soc-logs`, `soc-metrics`, `soc-incidents`)
 - Seed synthetic data with demo scenarios
 
 ### 3. Create Custom Tools in Agent Builder
 
 Before creating the agent, we must create its tools.
 1. Open **Kibana → Agent Builder → Tools**
-2. Click **Create Tool**, then create these 4 tools using the configurations in the `tools/` directory:
+2. Click **Create Tool**, then create these 3 tools using the configurations in the `tools/` directory:
    - `anomaly_detector` (ES|QL tool) — copy prompt & query from [`tools/anomaly_detector.esql`](tools/anomaly_detector.esql)
    - `log_analyzer` (ES|QL tool) — copy prompt & query from [`tools/log_analyzer.esql`](tools/log_analyzer.esql)
    - `incident_search` (Index Search tool) — copy configuration from [`tools/incident_search.json`](tools/incident_search.json)
-   - `remediation_workflow` (Workflow tool) — you'll need to create the workflow first using [`tools/remediation_workflow.yml`](tools/remediation_workflow.yml), then select it here.
 
 ### 4. Create the Agent
 
@@ -91,7 +88,7 @@ Before creating the agent, we must create its tools.
 2. **Agent ID**: `soc-blackout`
 3. **Display Name**: SOC Blackout
 4. **Custom Instructions**: Copy contents of [`agent/instructions.md`](agent/instructions.md)
-5. **Assign Tools**: Select the 4 tools you just created (`anomaly_detector`, `log_analyzer`, `incident_search`, `remediation_workflow`)
+5. **Assign Tools**: Select the 3 tools you just created (`anomaly_detector`, `log_analyzer`, `incident_search`)
 6. **Save and Chat**
 
 ### 4. Try It
@@ -160,8 +157,7 @@ soc-blackout/
 ├── tools/
 │   ├── anomaly_detector.esql    # ES|QL — Infrastructure anomaly detection
 │   ├── log_analyzer.esql        # ES|QL — Error pattern analysis
-│   ├── incident_search.json     # Index Search — Historical incident RAG
-│   └── remediation_workflow.yml # Workflow — Safe remediation execution
+│   └── incident_search.json     # Index Search — Historical incident RAG
 ├── mcp/
 │   └── mcp_config.json          # MCP server client configuration
 ├── scripts/
@@ -181,10 +177,10 @@ soc-blackout/
 
 SOC Blackout is designed with production safety as a first-class concern:
 
-1. **2-Phase Execution**: The agent always proposes before executing. No silent actions.
+1. **Propose-First Design**: The agent always proposes before acting. No silent actions.
 2. **Confidence Threshold**: If confidence < 70%, the agent enters analysis-only mode and recommends human investigation.
 3. **Kill Switch**: The operator can say "ABORT" at any time to halt all operations.
-4. **Full Audit Trail**: Every action (proposed, approved, executed, rejected) is logged to `soc-actions` with timestamps and confidence scores.
+4. **Inline Post-Mortem**: The agent generates a structured post-mortem directly in the chat, including root cause, actions taken, time saved, and prevention recommendations.
 5. **Scoped Permissions**: MCP API keys are restricted to `soc-*` indices with read-only access.
 
 ---
@@ -196,7 +192,6 @@ SOC Blackout is designed with production safety as a first-class concern:
 | **Custom Agent** | Tailored instructions with 6-phase incident response workflow |
 | **ES\|QL Tools** | 2 parameterized queries for real-time metrics and log analysis |
 | **Index Search Tool** | Semantic search over historical incident knowledge base |
-| **Workflow Tool** | Automated remediation with audit logging + post-mortem generation |
 | **MCP Server** | Agent accessible from Claude Desktop, Cursor, VS Code, or Slack |
 | **Kibana Chat** | Primary interface for operator interaction |
 
@@ -204,8 +199,8 @@ SOC Blackout is designed with production safety as a first-class concern:
 
 ## 💡 What We Liked
 
-1. **ES|QL Power**: The ability to write complex aggregation queries with JOINs and pipe them directly as agent tools is incredibly powerful. It makes the agent feel like it truly "understands" the data.
-2. **Workflow Integration**: The `ai.agent` step in Workflows creates a feedback loop where agents can reason about the results of their own actions — perfect for post-mortem generation.
+1. **ES|QL Power**: The ability to write complex aggregation queries and pipe them directly as agent tools is incredibly powerful. It makes the agent feel like it truly "understands" the data.
+2. **Index Search + RAG**: The combination of semantic search over historical incidents with real-time ES|QL data gives the agent institutional memory — it doesn't just diagnose, it learns from the past.
 3. **MCP Server**: Being able to expose the same agent to multiple interfaces (Kibana, CLI, IDE) without any additional code is a game-changer for adoption.
 
 ## ⚡ Challenges

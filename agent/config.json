@@ -14,8 +14,7 @@
     "tools": [
         "anomaly_detector",
         "log_analyzer",
-        "incident_search",
-        "remediation_workflow"
+        "incident_search"
     ],
     "notes": "Instructions are defined in agent/instructions.md and should be pasted into the Custom Instructions field in Agent Builder."
 }

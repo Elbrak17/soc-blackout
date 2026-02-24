@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
 SOC Blackout — Synthetic Data Seeder
-Generates realistic incident response data across 4 Elasticsearch indices:
+Generates realistic incident response data across 3 Elasticsearch indices:
   - soc-logs     : Application/system logs with error patterns
   - soc-metrics  : Infrastructure metrics (CPU, memory, disk, network)
   - soc-incidents: Historical incident knowledge base
-  - soc-actions  : Audit log of agent actions (starts empty)
 """
 
 import os
@@ -92,18 +91,6 @@ MAPPINGS = {
                 "created_at": {"type": "date"},
                 "tags": {"type": "keyword"},
                 "runbook": {"type": "text"},
-            }
-        }
-    },
-    "soc-actions": {
-        "mappings": {
-            "properties": {
-                "@timestamp": {"type": "date"},
-                "action_type": {"type": "keyword"},
-                "description": {"type": "text"},
-                "confidence": {"type": "integer"},
-                "status": {"type": "keyword"},
-                "incident_ref": {"type": "keyword"},
             }
         }
     },
