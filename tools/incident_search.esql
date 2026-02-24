@@ -30,11 +30,8 @@
 #    │ Name          │ Type   │ Required │ Default │ Description                                      │
 #    ├───────────────┼────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
 #    │ search_term   │ string │ required │ (none)  │ Keyword to search for in incident titles and     │
-#    │               │        │          │         │ root causes. Use short terms like "OOM",          │
-#    │               │        │          │         │ "CPU",
-"cascade",
-"timeout",
-"certificate".       │
+#    │               │        │          │         │ root causes. Use short terms like "OOM", "CPU",  │
+#    │               │        │          │         │ "timeout", "cascade","certificate".              │
 #    └───────────────┴────────┴──────────┴─────────┴──────────────────────────────────────────────────┘
 #
 # ============================================================
@@ -42,9 +39,6 @@
 # --- COPY FROM HERE ---
 # (paste only the line below into the ES|QL query field)
 
-FROM soc-incidents | WHERE title LIKE CONCAT("*", ?search_term,
-"*") OR root_cause LIKE CONCAT("*", ?search_term,
-"*") OR resolution LIKE CONCAT("*", ?search_term,
-"*") | KEEP incident_id, title, root_cause, resolution, services_affected, severity, duration_min, tags, runbook | SORT severity ASC | LIMIT 5
+FROM soc-incidents | WHERE MATCH(title, ?search_term) OR MATCH(root_cause, ?search_term) OR MATCH(resolution, ?search_term) | KEEP incident_id, title, root_cause, resolution, services_affected, severity, duration_min, tags, runbook | SORT severity ASC | LIMIT 5
 
 # --- END ---
