@@ -6,23 +6,12 @@
     "setup_instructions": {
         "step_1": "Go to Agent Builder → Tools → Create Tool → Index Search",
         "step_2": "Set Tool ID to 'incident_search'",
-        "step_3": "Set Display Name to 'Incident Search'",
+        "step_3": "Set Name to 'Incident Search'",
         "step_4": "Copy the 'description' field above as the tool description",
         "step_5": "Set Index Pattern to 'soc-incidents'",
-        "step_6": "Configure the fields to return: incident_id, title, root_cause, resolution, services_affected, severity, duration_min, tags, runbook",
-        "step_7": "Save the tool"
+        "step_6": "Row limit: leave default (e.g., 5)",
+        "step_7": "Custom instructions: Copy the entire 'Custom Instructions' block below exactly as is",
+        "step_8": "Save the tool"
     },
-    "parameters": {
-        "query": {
-            "type": "string",
-            "required": true,
-            "description": "Natural language description of the current incident symptoms to search for in the knowledge base. Include error messages, affected services, and observed metrics. Example: 'OOM crash on payment-service with memory at 98%'."
-        }
-    },
-    "notes": [
-        "Kibana auto-generates a 'query' parameter for Index Search tools.",
-        "The description above tells the agent HOW to formulate its query.",
-        "BM25 full-text search on 'runbook' + 'root_cause' + 'title' is used.",
-        "If ELSER/E5 semantic search is available on the index, it will be used automatically."
-    ]
+    "kibana_custom_instructions_field": "When calling this tool, provide a 'query' parameter that describes the current incident symptoms in natural language (e.g., 'OOM crash on payment-service with memory at 98%'). You must extract and return the following fields from the search results: incident_id, title, root_cause, resolution, services_affected, severity, duration_min, tags, runbook."
 }
