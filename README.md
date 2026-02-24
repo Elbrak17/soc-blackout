@@ -89,7 +89,7 @@ Before creating the agent, we must create its tools.
 3. **Display Name**: SOC Blackout
 4. **Display Description**: `AI-powered Incident Commander — Detects anomalies, correlates with past incidents, and coordinates remediation with human-in-the-loop safety.`
 5. **Custom Instructions**: Copy contents of [`agent/instructions.md`](agent/instructions.md)
-6. **Assign Tools**: Keep the default tools enabled, and also select the 3 custom tools you just created (`anomaly_detector`, `log_analyzer`, `incident_search`)
+6. **Assign Tools**: Keep the 5 default platform tools enabled (`platform.core.search`, `get_document_by_id`, `get_index_mapping`, `list_indices`, `get_workflow_execution_status`), and also select the 3 custom tools you created (`anomaly_detector`, `log_analyzer`, `incident_search`)
 7. **Save and Chat**
 
 ### 4. Try It
