@@ -4,14 +4,14 @@
     "display_name": "Incident Search",
     "description": "Searches the historical incidents knowledge base to find similar past incidents based on symptoms, root causes, affected services, and error patterns. Uses semantic search to match current symptoms with past incident runbooks and resolutions. Call this tool AFTER anomaly_detector and log_analyzer to correlate current issues with historical data.",
     "setup_instructions": {
-        "step_1": "Go to Agent Builder → Tools → Create Tool → Index Search",
+        "step_1": "Go to Agent Builder → Tools → Create Tool",
         "step_2": "Set Tool ID to 'incident_search'",
-        "step_3": "Set Name to 'Incident Search'",
+        "step_3": "Set Display Name to 'Incident Search'",
         "step_4": "Copy the 'description' field above as the tool description",
-        "step_5": "Set Index Pattern to 'soc-incidents'",
-        "step_6": "Row limit: leave default (e.g., 5)",
-        "step_7": "Custom instructions: Copy the entire 'Custom Instructions' block below exactly as is",
-        "step_8": "Save the tool"
-    },
-    "kibana_custom_instructions_field": "When calling this tool, provide a 'query' parameter that describes the current incident symptoms in natural language (e.g., 'OOM crash on payment-service with memory at 98%'). You must extract and return the following fields from the search results: incident_id, title, root_cause, resolution, services_affected, severity, duration_min, tags, runbook."
+        "step_5": "Set Type to 'Index search'",
+        "step_6": "Select index 'soc-incidents'",
+        "step_7_row_limit": "Set Row Limit to 10",
+        "step_8_custom_instructions": "Paste this into Custom Instructions: 'Search for past incidents matching the current symptoms. Focus on root_cause, resolution, and runbook fields. Return the most relevant matches based on error patterns, affected services, and severity.'",
+        "step_9": "Save the tool. No parameters to configure — the agent generates search queries automatically."
+    }
 }
