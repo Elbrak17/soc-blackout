@@ -1,0 +1,50 @@
+# Incident Search — ES|QL Tool
+#
+# Purpose: Search the historical incidents knowledge base for similar past incidents
+# Tool Type: ES|QL (converted from Index Search for reliability)
+# Index: soc-incidents
+#
+# ============================================================
+# KIBANA SETUP INSTRUCTIONS
+# ============================================================
+#
+# 1. Go to Agent Builder → Tools → Create Tool → ES|QL
+#
+# 2. Tool ID: incident_search
+#
+# 3. Name: Incident Search
+#
+# 4. Description (copy this exactly):
+#      Searches the historical incidents knowledge base to find
+#      similar past incidents based on affected services and severity.
+#      Returns incident IDs, root causes, resolutions, and runbooks.
+#      Call this tool AFTER anomaly_detector and log_analyzer to
+#      correlate current issues with historical data.
+#
+# 5. Copy ONLY the query below (everything between the dashes)
+#    into the ES|QL query field. Do NOT include these comments.
+#
+# 6. Parameters (Kibana detects ?params in the query):
+#
+#    ┌───────────────┬────────┬──────────┬─────────┬──────────────────────────────────────────────────┐
+#    │ Name          │ Type   │ Required │ Default │ Description                                      │
+#    ├───────────────┼────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+#    │ search_term   │ string │ required │ (none)  │ Keyword to search for in incident titles and     │
+#    │               │        │          │         │ root causes. Use short terms like "OOM",          │
+#    │               │        │          │         │ "CPU",
+"cascade",
+"timeout",
+"certificate".       │
+#    └───────────────┴────────┴──────────┴─────────┴──────────────────────────────────────────────────┘
+#
+# ============================================================
+
+# --- COPY FROM HERE ---
+# (paste only the line below into the ES|QL query field)
+
+FROM soc-incidents | WHERE title LIKE CONCAT("*", ?search_term,
+"*") OR root_cause LIKE CONCAT("*", ?search_term,
+"*") OR resolution LIKE CONCAT("*", ?search_term,
+"*") | KEEP incident_id, title, root_cause, resolution, services_affected, severity, duration_min, tags, runbook | SORT severity ASC | LIMIT 5
+
+# --- END ---

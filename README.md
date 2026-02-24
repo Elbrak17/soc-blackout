@@ -34,7 +34,7 @@ For a detailed architecture with data flow diagrams, see [docs/architecture.md](
 | Feature | Description |
 |---|---|
 | **6-Phase Workflow** | Detect → Diagnose → Correlate → Assess → Propose → Report |
-| **3 Custom Tools** | 2 ES\|QL (metrics + logs), 1 Index Search (historical incident KB) |
+| **3 Custom Tools** | 3 ES\|QL queries: metrics anomaly detection, log error analysis, historical incident search |
 | **Historical Correlation** | RAG search over 8 past incidents to find pattern matches |
 | **Confidence Scoring** | 0-100 score with threshold-based behavior (< 70% = analysis-only mode) |
 | **Human-in-the-Loop** | Agent never auto-executes — requires explicit operator approval |
@@ -80,7 +80,7 @@ Before creating the agent, we must create its tools.
 2. Click **Create Tool**, then create these 3 tools using the configurations in the `tools/` directory:
    - `anomaly_detector` (ES|QL tool) — copy prompt & query from [`tools/anomaly_detector.esql`](tools/anomaly_detector.esql)
    - `log_analyzer` (ES|QL tool) — copy prompt & query from [`tools/log_analyzer.esql`](tools/log_analyzer.esql)
-   - `incident_search` (Index Search tool) — copy configuration from [`tools/incident_search.json`](tools/incident_search.json)
+   - `incident_search` (ES|QL tool) — copy prompt & query from [`tools/incident_search.esql`](tools/incident_search.esql)
 
 ### 4. Create the Agent
 
@@ -158,7 +158,7 @@ soc-blackout/
 ├── tools/
 │   ├── anomaly_detector.esql    # ES|QL — Infrastructure anomaly detection
 │   ├── log_analyzer.esql        # ES|QL — Error pattern analysis
-│   └── incident_search.json     # Index Search — Historical incident RAG
+│   └── incident_search.json     # ES|QL — Historical incident correlation
 ├── mcp/
 │   └── mcp_config.json          # MCP server client configuration
 ├── scripts/
@@ -191,8 +191,7 @@ SOC Blackout is designed with production safety as a first-class concern:
 | Feature | How We Use It |
 |---|---|
 | **Custom Agent** | Tailored instructions with 6-phase incident response workflow |
-| **ES\|QL Tools** | 2 parameterized queries for real-time metrics and log analysis |
-| **Index Search Tool** | Semantic search over historical incident knowledge base |
+| **ES\|QL Tools** | 3 parameterized queries: real-time metrics, log analysis, and historical incident search |
 | **MCP Server** | Agent accessible from Claude Desktop, Cursor, VS Code, or Slack |
 | **Kibana Chat** | Primary interface for operator interaction |
 

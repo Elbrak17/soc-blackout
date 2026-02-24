@@ -88,4 +88,4 @@ sequenceDiagram
 |---|---|---|---|
 | `soc-metrics` | Infrastructure metrics | `@timestamp`, `host`, `cpu_pct`, `mem_pct`, `disk_io` | ES\|QL |
 | `soc-logs` | Application logs | `@timestamp`, `service`, `level`, `message`, `host` | ES\|QL |
-| `soc-incidents` | Historical KB | `incident_id`, `title`, `root_cause`, `runbook` | Index Search (semantic) |
+| `soc-incidents` | Historical KB | `incident_id`, `title`, `root_cause`, `runbook` | ES\|QL |
